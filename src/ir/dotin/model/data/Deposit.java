@@ -5,13 +5,18 @@ import java.math.BigDecimal;
 /**
  * @author : Bahar Zolfaghari
  **/
-public abstract class Deposit {
+public abstract class Deposit implements Comparable<Deposit> {
     private String customerNumber;
     private BigDecimal depositBalance;
     private int durationInDays;
     private BigDecimal payedInterest;
 
     public abstract BigDecimal calculateInterest();
+
+    @Override
+    public int compareTo(Deposit deposit) {
+        return Integer.compare(0, this.payedInterest.compareTo(deposit.payedInterest));
+    }
 
     public String getCustomerNumber() {
         return customerNumber;
@@ -47,5 +52,15 @@ public abstract class Deposit {
     public Deposit setPayedInterest(BigDecimal payedInterest) {
         this.payedInterest = payedInterest;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Deposit{" +
+                "customerNumber='" + customerNumber + '\'' +
+                ", depositBalance=" + depositBalance +
+                ", durationInDays=" + durationInDays +
+                ", payedInterest=" + payedInterest +
+                '}';
     }
 }
