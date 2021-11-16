@@ -10,11 +10,17 @@ public interface DepositFactory {
     static Deposit createDeposit(DepositType depositType) {
         switch (depositType) {
             case SHORT_TERM:
-                return new ShortTermDeposit();
+                return new ShortTermDeposit()
+                        .setDepositType(DepositType.SHORT_TERM)
+                        .setInterestRate(10);
             case LONG_TERM:
-                return new LongTermDeposit();
+                return new LongTermDeposit()
+                        .setDepositType(DepositType.LONG_TERM)
+                        .setInterestRate(20);
             case QARZ:
-                return new QarzDeposit();
+                return new QarzDeposit()
+                        .setDepositType(DepositType.QARZ)
+                        .setInterestRate(0);
             default:
                 return null;
         }
