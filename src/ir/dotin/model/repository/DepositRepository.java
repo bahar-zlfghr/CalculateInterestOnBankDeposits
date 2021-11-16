@@ -30,6 +30,10 @@ import java.util.List;
 public abstract class DepositRepository {
     private static final List<Deposit> deposits = new ArrayList<>();
 
+    /**
+     * this method initialize and create a document for parse xml file.
+     * @return Document this return created document.
+     * */
     private static Document getDocument() {
         Document document = null;
         try {
@@ -43,6 +47,10 @@ public abstract class DepositRepository {
         return document;
     }
 
+    /**
+     * this method fetch all valid deposits using document from xml file.
+     * @return List<Deposit> this returns all valid deposits that fetched from xml file.
+     * */
     public static List<Deposit> getAllDeposits() {
         Document document = getDocument();
         NodeList depositNodes = document.getElementsByTagName("deposit");
@@ -102,6 +110,10 @@ public abstract class DepositRepository {
         return deposits;
     }
 
+    /**
+     * this method writes customer number & payed interest per deposit in the txt file.
+     * @return void nothing.
+     * */
     public static void writeDepositsPayedInterestInfoInFile() {
         try {
             FileWriter writer = new FileWriter("src/resource/payed-interests-info.txt");

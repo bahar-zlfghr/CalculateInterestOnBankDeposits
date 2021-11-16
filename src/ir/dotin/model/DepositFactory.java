@@ -7,6 +7,11 @@ import ir.dotin.model.data.*;
  **/
 public interface DepositFactory {
 
+    /**
+     * this method creates deposit object base on deposit type.
+     * @param depositType the parameter that deposit object created by it.
+     * @return Deposit this returns the created deposit when deposit type is valid otherwise return null.
+     * */
     static Deposit createDeposit(DepositType depositType) {
         switch (depositType) {
             case SHORT_TERM:

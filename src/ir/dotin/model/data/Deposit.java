@@ -14,6 +14,10 @@ public abstract class Deposit implements Comparable<Deposit> {
     private int interestRate;
     private BigDecimal payedInterest;
 
+    /**
+     * this method calculates the payed interest on deposit.
+     * @return BigDecimal this returns payed interest on deposit.
+     * */
     public BigDecimal calculateInterest() {
         return depositBalance
                 .multiply(BigDecimal.valueOf(interestRate * durationInDays))
