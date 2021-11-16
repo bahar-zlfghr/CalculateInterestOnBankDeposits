@@ -53,14 +53,4 @@ public abstract class Deposit implements Comparable<Deposit> {
         this.payedInterest = payedInterest;
         return this;
     }
-
-    @Override
-    public String toString() {
-        return "Deposit{" +
-                "customerNumber='" + customerNumber + '\'' +
-                ", depositBalance=" + depositBalance +
-                ", durationInDays=" + durationInDays +
-                ", payedInterest=" + payedInterest +
-                '}';
-    }
 }
