@@ -27,6 +27,7 @@ import java.util.List;
  * @author : Bahar Zolfaghari
  **/
 public abstract class DepositRepository {
+    private static final List<Deposit> deposits = new ArrayList<>();
 
     private static Document getDocument() {
         Document document = null;
@@ -42,7 +43,6 @@ public abstract class DepositRepository {
     }
 
     public static List<Deposit> getAllDeposits() {
-        List<Deposit> deposits = new ArrayList<>();
         Document document = getDocument();
         NodeList depositNodes = document.getElementsByTagName("deposit");
         for (int i = 0; i < depositNodes.getLength(); i++) {
