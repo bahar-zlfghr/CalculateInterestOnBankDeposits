@@ -9,6 +9,7 @@ public abstract class Deposit {
     private String customerNumber;
     private BigDecimal depositBalance;
     private int durationInDays;
+    private BigDecimal payedInterest;
 
     public String getCustomerNumber() {
         return customerNumber;
@@ -34,6 +35,15 @@ public abstract class Deposit {
 
     public Deposit setDurationInDays(int durationInDays) {
         this.durationInDays = durationInDays;
+        return this;
+    }
+
+    public BigDecimal getPayedInterest() {
+        return payedInterest;
+    }
+
+    public Deposit setPayedInterest(BigDecimal payedInterest) {
+        this.payedInterest = payedInterest;
         return this;
     }
 }
