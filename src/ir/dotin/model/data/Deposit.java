@@ -11,6 +11,8 @@ public abstract class Deposit {
     private int durationInDays;
     private BigDecimal payedInterest;
 
+    public abstract BigDecimal calculateInterest();
+
     public String getCustomerNumber() {
         return customerNumber;
     }
