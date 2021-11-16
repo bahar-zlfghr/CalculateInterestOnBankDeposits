@@ -105,6 +105,7 @@ public abstract class DepositRepository {
     public static void writeDepositsPayedInterestInfoInFile() {
         try {
             FileWriter writer = new FileWriter("src/resource/payed-interests-info.txt");
+            writer.write("customerNumber#payedInterest\n");
             deposits.forEach(deposit -> {
                 try {
                     writer.write(deposit.getCustomerNumber() + "#" + deposit.getPayedInterest() + "\n");
