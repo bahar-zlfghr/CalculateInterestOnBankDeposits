@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -99,5 +100,21 @@ public abstract class DepositRepository {
             }
         }
         return deposits;
+    }
+
+    public static void writeDepositsPayedInterestInfoInFile() {
+        try {
+            FileWriter writer = new FileWriter("src/resource/payed-interests-info.txt");
+            deposits.forEach(deposit -> {
+                try {
+                    writer.write(deposit.getCustomerNumber() + "#" + deposit.getPayedInterest() + "\n");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            });
+            writer.close();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 }
