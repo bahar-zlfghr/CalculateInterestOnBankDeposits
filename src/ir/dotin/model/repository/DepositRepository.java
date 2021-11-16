@@ -88,7 +88,8 @@ public abstract class DepositRepository {
                             deposit
                                     .setCustomerNumber(customerNumber)
                                     .setDepositBalance(depositBalance)
-                                    .setDurationInDays(durationInDays);
+                                    .setDurationInDays(durationInDays)
+                                    .setPayedInterest(deposit.calculateInterest());
                             deposits.add(deposit);
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
