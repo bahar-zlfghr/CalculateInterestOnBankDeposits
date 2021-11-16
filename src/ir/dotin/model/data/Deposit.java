@@ -1,17 +1,24 @@
 package ir.dotin.model.data;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author : Bahar Zolfaghari
  **/
 public abstract class Deposit implements Comparable<Deposit> {
     private String customerNumber;
+    private DepositType depositType;
     private BigDecimal depositBalance;
     private int durationInDays;
+    private int interestRate;
     private BigDecimal payedInterest;
 
-    public abstract BigDecimal calculateInterest();
+    public BigDecimal calculateInterest() {
+        return depositBalance
+                .multiply(BigDecimal.valueOf(interestRate * durationInDays))
+                .divide(BigDecimal.valueOf(36500), 4, RoundingMode.CEILING);
+    }
 
     @Override
     public int compareTo(Deposit deposit) {
@@ -24,6 +31,15 @@ public abstract class Deposit implements Comparable<Deposit> {
 
     public Deposit setCustomerNumber(String customerNumber) {
         this.customerNumber = customerNumber;
+        return this;
+    }
+
+    public DepositType getDepositType() {
+        return depositType;
+    }
+
+    public Deposit setDepositType(DepositType depositType) {
+        this.depositType = depositType;
         return this;
     }
 
@@ -42,6 +58,15 @@ public abstract class Deposit implements Comparable<Deposit> {
 
     public Deposit setDurationInDays(int durationInDays) {
         this.durationInDays = durationInDays;
+        return this;
+    }
+
+    public int getInterestRate() {
+        return interestRate;
+    }
+
+    public Deposit setInterestRate(int interestRate) {
+        this.interestRate = interestRate;
         return this;
     }
 
