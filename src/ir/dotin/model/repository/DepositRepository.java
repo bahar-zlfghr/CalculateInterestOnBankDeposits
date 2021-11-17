@@ -94,11 +94,17 @@ public abstract class DepositRepository {
                         Object object = createDeposit.invoke(null, depositType);
                         if (object instanceof Deposit) {
                             Deposit deposit = (Deposit) object;
-                            deposit
-                                    .setCustomerNumber(customerNumber)
-                                    .setDepositBalance(depositBalance)
-                                    .setDurationInDays(durationInDays)
-                                    .setPayedInterest(deposit.calculateInterest());
+                            Class<? extends Deposit> depositClass = deposit.getClass();
+                            Method setCustomerNumber = depositClass.getMethod("setCustomerNumber", String.class);
+                            setCustomerNumber.invoke(deposit, customerNumber);
+                            Method setDepositBalance = depositClass.getMethod("setDepositBalance", BigDecimal.class);
+                            setDepositBalance.invoke(deposit, depositBalance);
+                            Method setDurationInDays = depositClass.getMethod("setDurationInDays", int.class);
+                            setDurationInDays.invoke(deposit, durationInDays);
+                            Method setPayedInterest = depositClass.getMethod("setPayedInterest", BigDecimal.class);
+                            Method calculateInterest = depositClass.getMethod("calculateInterest");
+                            Object result = calculateInterest.invoke(deposit);
+                            setPayedInterest.invoke(deposit, new BigDecimal(result.toString()));
                             deposits.add(deposit);
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
