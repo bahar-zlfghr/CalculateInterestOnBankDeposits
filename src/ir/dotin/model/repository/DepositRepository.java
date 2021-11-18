@@ -1,21 +1,15 @@
 package ir.dotin.model.repository;
 
-import ir.dotin.exception.DepositTypeMismatchException;
-import ir.dotin.exception.InvalidDepositBalanceException;
-import ir.dotin.exception.InvalidDurationInDaysException;
 import ir.dotin.model.DepositFactory;
 import ir.dotin.model.data.Deposit;
 import ir.dotin.model.data.DepositType;
+import ir.dotin.util.DepositUtil;
+import ir.dotin.util.DocumentUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,45 +22,37 @@ import java.util.List;
  * @author : Bahar Zolfaghari
  **/
 public abstract class DepositRepository {
+    private static final String ROOT = "src/resource";
     private static final List<Deposit> deposits = new ArrayList<>();
+    private static final List<Exception> exceptions = new ArrayList<>();
 
     /**
-     * this method initialize and create a document for parse xml file.
-     * @return Document this return created document.
+     * @return List<Exception> return all exceptions that occurred.
      * */
-    private static Document getDocument() {
-        Document document = null;
-        try {
-            File depositsInfoFile = new File("src/resource/deposits-info");
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(depositsInfoFile);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            e.printStackTrace();
-        }
-        return document;
+    public static List<Exception> getExceptions() {
+        return exceptions;
     }
 
     /**
      * this method fetch all valid deposits using document from xml file.
      * @return List<Deposit> this returns all valid deposits that fetched from xml file.
-     * */
+     */
     public static List<Deposit> getAllDeposits() {
-        Document document = getDocument();
+        Document document = DocumentUtil.getDocument(ROOT + "/deposits-info");
         NodeList depositNodes = document.getElementsByTagName("deposit");
         for (int i = 0; i < depositNodes.getLength(); i++) {
-            boolean hasError;
+            exceptions.clear();
             Node depositNode = depositNodes.item(i);
             if (depositNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element depositElement = (Element) depositNode;
                 String customerNumber = depositElement.getElementsByTagName("customerNumber").item(0).getTextContent();
                 DepositType depositType = DepositType.getDepositType(depositElement.getElementsByTagName("depositType").item(0).getTextContent());
-                hasError = checkValidateDepositType(depositType, i);
+                DepositUtil.checkValidateDepositType(depositType, i);
                 BigDecimal depositBalance = new BigDecimal(depositElement.getElementsByTagName("depositBalance").item(0).getTextContent());
-                hasError = checkValidateDepositBalance(depositBalance, i) || hasError;
+                DepositUtil.checkValidateDepositBalance(depositBalance, i);
                 int durationInDays = Integer.parseInt(depositElement.getElementsByTagName("durationInDays").item(0).getTextContent());
-                hasError = checkValidateDurationInDays(durationInDays, i) || hasError;
-                if (!hasError) {
+                DepositUtil.checkValidateDurationInDays(durationInDays, i);
+                if (exceptions.isEmpty()) {
                     try {
                         Method createDeposit = DepositFactory.class.getDeclaredMethod("createDeposit", DepositType.class);
                         Object object = createDeposit.invoke(null, depositType);
@@ -89,72 +75,21 @@ public abstract class DepositRepository {
                         e.printStackTrace();
                     }
                 }
+                else {
+                    exceptions.forEach(e -> System.out.println(e.getMessage()));
+                }
             }
         }
         return deposits;
     }
 
     /**
-     * this method check deposit type is valid or not.
-     * @param depositType deposit type will be check that equal to SHORT_TERM, LONG_TERM or QARZ.
-     * @param depositIndex deposit index used for error message print if deposit type is not valid.
-     * @return boolean if deposit type has error return true and otherwise return false.
-     * */
-    private static boolean checkValidateDepositType(DepositType depositType, int depositIndex) {
-        if (depositType == null) {
-            try {
-                throw new DepositTypeMismatchException("Error[Deposit" + (depositIndex + 1) + "]: The deposit type is not valid!");
-            } catch (DepositTypeMismatchException e) {
-                System.out.println(e.getMessage());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * this method check deposit balance is valid or not.
-     * @param depositBalance deposit balance will be check that equal or greater than zero.
-     * @param depositIndex deposit index used for print error message if deposit balance is not valid.
-     * @return boolean if deposit balance has error return true and otherwise return false.
-     * */
-    private static boolean checkValidateDepositBalance(BigDecimal depositBalance, int depositIndex) {
-        if (depositBalance.compareTo(BigDecimal.ZERO) < 0) {
-            try {
-                throw new InvalidDepositBalanceException("Error[Deposit" + (depositIndex + 1) + "]: The deposit balance is less than zero!");
-            } catch (InvalidDepositBalanceException e) {
-                System.out.println(e.getMessage());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * this method check duration in days is valid or not.
-     * @param durationInDays duration in days will be check that greater than zero.
-     * @param depositIndex deposit index used for print error message if deposit balance is not valid.
-     * @return boolean if duration in days has error return true and otherwise return false.
-     * */
-    private static boolean checkValidateDurationInDays(int durationInDays, int depositIndex) {
-        if (durationInDays <= 0) {
-            try {
-                throw new InvalidDurationInDaysException("Error[Deposit" + (depositIndex + 1) + "]: The duration in days is equal or less than zero!");
-            } catch (InvalidDurationInDaysException e) {
-                System.out.println(e.getMessage());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * this method writes customer number & payed interest per deposit in the txt file.
      * @return void nothing.
-     * */
+     */
     public static void writeDepositsPayedInterestInfoInFile() {
         try {
-            FileWriter writer = new FileWriter("src/resource/payed-interests-info.txt");
+            FileWriter writer = new FileWriter(ROOT + "/payed-interests-info.txt");
             writer.write("customerNumber#payedInterest\n");
             deposits.forEach(deposit -> {
                 try {
