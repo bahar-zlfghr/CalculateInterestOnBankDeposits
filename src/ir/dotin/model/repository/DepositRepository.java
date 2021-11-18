@@ -55,39 +55,17 @@ public abstract class DepositRepository {
         Document document = getDocument();
         NodeList depositNodes = document.getElementsByTagName("deposit");
         for (int i = 0; i < depositNodes.getLength(); i++) {
-            boolean hasError = false;
+            boolean hasError;
             Node depositNode = depositNodes.item(i);
             if (depositNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element depositElement = (Element) depositNode;
                 String customerNumber = depositElement.getElementsByTagName("customerNumber").item(0).getTextContent();
                 DepositType depositType = DepositType.getDepositType(depositElement.getElementsByTagName("depositType").item(0).getTextContent());
-                if (depositType == null) {
-                    try {
-                        throw new DepositTypeMismatchException("Error[Deposit" + (i + 1) + "]: The deposit type is not valid!");
-                    } catch (DepositTypeMismatchException e) {
-                        hasError = true;
-                        System.out.println(e.getMessage());
-                    }
-                }
-                String balance = depositElement.getElementsByTagName("depositBalance").item(0).getTextContent();
-                BigDecimal depositBalance = new BigDecimal(balance);
-                if (depositBalance.compareTo(BigDecimal.ZERO) <= 0) {
-                    try {
-                        throw new InvalidDepositBalanceException("Error[Deposit" + (i + 1) + "]: The deposit balance is less than zero!");
-                    } catch (InvalidDepositBalanceException e) {
-                        hasError = true;
-                        System.out.println(e.getMessage());
-                    }
-                }
+                hasError = checkValidateDepositType(depositType, i);
+                BigDecimal depositBalance = new BigDecimal(depositElement.getElementsByTagName("depositBalance").item(0).getTextContent());
+                hasError = checkValidateDepositBalance(depositBalance, i) || hasError;
                 int durationInDays = Integer.parseInt(depositElement.getElementsByTagName("durationInDays").item(0).getTextContent());
-                if (durationInDays <= 0) {
-                    try {
-                        throw new InvalidDurationInDaysException("Error[Deposit" + (i + 1) + "]: The duration in days is equal or less than zero!");
-                    } catch (InvalidDurationInDaysException e) {
-                        hasError = true;
-                        System.out.println(e.getMessage());
-                    }
-                }
+                hasError = checkValidateDurationInDays(durationInDays, i) || hasError;
                 if (!hasError) {
                     try {
                         Method createDeposit = DepositFactory.class.getDeclaredMethod("createDeposit", DepositType.class);
@@ -114,6 +92,42 @@ public abstract class DepositRepository {
             }
         }
         return deposits;
+    }
+
+    private static boolean checkValidateDepositType(DepositType depositType, int depositIndex) {
+        if (depositType == null) {
+            try {
+                throw new DepositTypeMismatchException("Error[Deposit" + (depositIndex + 1) + "]: The deposit type is not valid!");
+            } catch (DepositTypeMismatchException e) {
+                System.out.println(e.getMessage());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkValidateDepositBalance(BigDecimal depositBalance, int depositIndex) {
+        if (depositBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            try {
+                throw new InvalidDepositBalanceException("Error[Deposit" + (depositIndex + 1) + "]: The deposit balance is less than zero!");
+            } catch (InvalidDepositBalanceException e) {
+                System.out.println(e.getMessage());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkValidateDurationInDays(int durationInDays, int depositIndex) {
+        if (durationInDays <= 0) {
+            try {
+                throw new InvalidDurationInDaysException("Error[Deposit" + (depositIndex + 1) + "]: The duration in days is equal or less than zero!");
+            } catch (InvalidDurationInDaysException e) {
+                System.out.println(e.getMessage());
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
