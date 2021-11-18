@@ -5,6 +5,7 @@ import ir.dotin.model.data.Deposit;
 import ir.dotin.model.data.DepositType;
 import ir.dotin.util.DepositUtil;
 import ir.dotin.util.DocumentUtil;
+import ir.dotin.util.SetDepositProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,27 +54,33 @@ public abstract class DepositRepository {
                 int durationInDays = Integer.parseInt(depositElement.getElementsByTagName("durationInDays").item(0).getTextContent());
                 DepositUtil.checkValidateDurationInDays(durationInDays, i);
                 if (exceptions.isEmpty()) {
-                    try {
-                        Method createDeposit = DepositFactory.class.getDeclaredMethod("createDeposit", DepositType.class);
-                        Object object = createDeposit.invoke(null, depositType);
-                        if (object instanceof Deposit) {
-                            Deposit deposit = (Deposit) object;
-                            Class<? extends Deposit> depositClass = deposit.getClass();
-                            Method setCustomerNumber = depositClass.getMethod("setCustomerNumber", String.class);
-                            setCustomerNumber.invoke(deposit, customerNumber);
-                            Method setDepositBalance = depositClass.getMethod("setDepositBalance", BigDecimal.class);
-                            setDepositBalance.invoke(deposit, depositBalance);
-                            Method setDurationInDays = depositClass.getMethod("setDurationInDays", int.class);
-                            setDurationInDays.invoke(deposit, durationInDays);
-                            Method setPayedInterest = depositClass.getMethod("setPayedInterest", BigDecimal.class);
-                            Method calculateInterest = depositClass.getMethod("calculateInterest");
-                            Object result = calculateInterest.invoke(deposit);
-                            setPayedInterest.invoke(deposit, new BigDecimal(result.toString()));
-                            deposits.add(deposit);
+                    SetDepositProperties setDepositProperties = (customerNumber1, depositBalance1, durationInDays1) -> {
+                        Deposit deposit = null;
+                        try {
+                            Method createDeposit = DepositFactory.class.getDeclaredMethod("createDeposit", DepositType.class);
+                            Object object = createDeposit.invoke(null, depositType);
+                            if (object instanceof Deposit) {
+                                deposit = (Deposit) object;
+                                Class<? extends Deposit> depositClass = deposit.getClass();
+                                Method setCustomerNumber = depositClass.getMethod("setCustomerNumber", String.class);
+                                setCustomerNumber.invoke(deposit, customerNumber1);
+                                Method setDepositBalance = depositClass.getMethod("setDepositBalance", BigDecimal.class);
+                                setDepositBalance.invoke(deposit, depositBalance1);
+                                Method setDurationInDays = depositClass.getMethod("setDurationInDays", int.class);
+                                setDurationInDays.invoke(deposit, durationInDays1);
+                                Method setPayedInterest = depositClass.getMethod("setPayedInterest", BigDecimal.class);
+                                Method calculateInterest = depositClass.getMethod("calculateInterest");
+                                Object result = calculateInterest.invoke(deposit);
+                                setPayedInterest.invoke(deposit, new BigDecimal(result.toString()));
+                                deposits.add(deposit);
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
                         }
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+                        return deposit;
+                    };
+                    Deposit deposit = setDepositProperties.setProperties(customerNumber, depositBalance, durationInDays);
+                    deposits.add(deposit);
                 }
                 else {
                     exceptions.forEach(e -> System.out.println(e.getMessage()));
