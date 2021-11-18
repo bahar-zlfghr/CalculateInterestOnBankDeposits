@@ -94,6 +94,12 @@ public abstract class DepositRepository {
         return deposits;
     }
 
+    /**
+     * this method check deposit type is valid or not.
+     * @param depositType deposit type will be check that equal to SHORT_TERM, LONG_TERM or QARZ.
+     * @param depositIndex deposit index used for error message print if deposit type is not valid.
+     * @return boolean if deposit type has error return true and otherwise return false.
+     * */
     private static boolean checkValidateDepositType(DepositType depositType, int depositIndex) {
         if (depositType == null) {
             try {
@@ -106,8 +112,14 @@ public abstract class DepositRepository {
         return false;
     }
 
+    /**
+     * this method check deposit balance is valid or not.
+     * @param depositBalance deposit balance will be check that equal or greater than zero.
+     * @param depositIndex deposit index used for print error message if deposit balance is not valid.
+     * @return boolean if deposit balance has error return true and otherwise return false.
+     * */
     private static boolean checkValidateDepositBalance(BigDecimal depositBalance, int depositIndex) {
-        if (depositBalance.compareTo(BigDecimal.ZERO) <= 0) {
+        if (depositBalance.compareTo(BigDecimal.ZERO) < 0) {
             try {
                 throw new InvalidDepositBalanceException("Error[Deposit" + (depositIndex + 1) + "]: The deposit balance is less than zero!");
             } catch (InvalidDepositBalanceException e) {
@@ -118,6 +130,12 @@ public abstract class DepositRepository {
         return false;
     }
 
+    /**
+     * this method check duration in days is valid or not.
+     * @param durationInDays duration in days will be check that greater than zero.
+     * @param depositIndex deposit index used for print error message if deposit balance is not valid.
+     * @return boolean if duration in days has error return true and otherwise return false.
+     * */
     private static boolean checkValidateDurationInDays(int durationInDays, int depositIndex) {
         if (durationInDays <= 0) {
             try {
