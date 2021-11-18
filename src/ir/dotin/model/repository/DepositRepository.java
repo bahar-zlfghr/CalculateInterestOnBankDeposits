@@ -72,7 +72,6 @@ public abstract class DepositRepository {
                                 Method calculateInterest = depositClass.getMethod("calculateInterest");
                                 Object result = calculateInterest.invoke(deposit);
                                 setPayedInterest.invoke(deposit, new BigDecimal(result.toString()));
-                                deposits.add(deposit);
                             }
                         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                             e.printStackTrace();
