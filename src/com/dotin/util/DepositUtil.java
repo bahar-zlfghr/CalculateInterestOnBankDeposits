@@ -1,10 +1,10 @@
-package ir.dotin.util;
+package com.dotin.util;
 
-import ir.dotin.exception.DepositTypeMismatchException;
-import ir.dotin.exception.InvalidDepositBalanceException;
-import ir.dotin.exception.InvalidDurationInDaysException;
-import ir.dotin.model.data.DepositType;
-import ir.dotin.model.repository.DepositRepository;
+import com.dotin.exception.DepositTypeMismatchException;
+import com.dotin.exception.InvalidDepositBalanceException;
+import com.dotin.exception.InvalidDurationInDaysException;
+import com.dotin.model.data.DepositType;
+import com.dotin.model.repository.DepositRepository;
 
 import java.math.BigDecimal;
 

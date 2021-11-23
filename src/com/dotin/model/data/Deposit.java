@@ -1,4 +1,4 @@
-package ir.dotin.model.data;
+package com.dotin.model.data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

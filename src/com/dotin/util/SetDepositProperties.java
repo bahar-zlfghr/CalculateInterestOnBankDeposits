@@ -1,8 +1,7 @@
-package ir.dotin.util;
+package com.dotin.util;
 
-import ir.dotin.model.data.Deposit;
+import com.dotin.model.data.Deposit;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 
 /**

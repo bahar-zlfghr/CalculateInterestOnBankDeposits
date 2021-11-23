@@ -1,11 +1,11 @@
-package ir.dotin.model.repository;
+package com.dotin.model.repository;
 
-import ir.dotin.model.DepositFactory;
-import ir.dotin.model.data.Deposit;
-import ir.dotin.model.data.DepositType;
-import ir.dotin.util.DepositUtil;
-import ir.dotin.util.DocumentUtil;
-import ir.dotin.util.SetDepositProperties;
+import com.dotin.model.DepositFactory;
+import com.dotin.model.data.Deposit;
+import com.dotin.util.DepositUtil;
+import com.dotin.util.DocumentUtil;
+import com.dotin.model.data.DepositType;
+import com.dotin.util.SetDepositProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

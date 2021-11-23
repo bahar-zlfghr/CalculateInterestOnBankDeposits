@@ -1,7 +1,7 @@
-package ir.dotin;
+package com.dotin;
 
-import ir.dotin.model.data.Deposit;
-import ir.dotin.model.repository.DepositRepository;
+import com.dotin.model.data.Deposit;
+import com.dotin.model.repository.DepositRepository;
 
 import java.util.List;
 

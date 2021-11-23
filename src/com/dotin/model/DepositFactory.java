@@ -1,6 +1,6 @@
-package ir.dotin.model;
+package com.dotin.model;
 
-import ir.dotin.model.data.*;
+import com.dotin.model.data.*;
 
 /**
  * @author : Bahar Zolfaghari

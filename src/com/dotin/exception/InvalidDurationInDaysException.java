@@ -1,4 +1,4 @@
-package ir.dotin.exception;
+package com.dotin.exception;
 
 /**
  * @author : Bahar Zolfaghari

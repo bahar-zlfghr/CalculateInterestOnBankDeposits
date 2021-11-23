@@ -1,4 +1,4 @@
-package ir.dotin.util;
+package com.dotin.util;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

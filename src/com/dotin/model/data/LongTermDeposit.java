@@ -1,4 +1,4 @@
-package ir.dotin.model.data;
+package com.dotin.model.data;
 
 /**
  * @author : Bahar Zolfaghari
